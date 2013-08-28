@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-TW">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="http://openlayers.org/api/OpenLayers.js"></script>
+</head>
+<body>
+	<div style="width:800px;height:600px;" id="map"></div>
+	<script>
+		var map = new OpenLayers.Map('map');
+		var wms = new OpenLayers.Layer.WMS(
+			'OpenLayers WMS',
+			'http://vmap0.tiles.osgeo.org/wms/vmap0?layers=basic'
+		);
+		map.addLayer(wms);
+		map.zoomToMaxExtent();
+
+		// 畫上標記
+		var addMarker=function(){
+			var vectorLayer = new OpenLayers.Layer.Vector("Overlay");
+			var feature = new OpenLayers.Feature.Vector(
+				new OpenLayers.Geometry.Point(0,0),
+				{some:'data'},
+				{externalGraphic: 's1.gif', graphicHeight: 16, graphicWidth: 16});
+			vectorLayer.addFeatures(feature);
+			map.addLayer(vectorLayer);
+		};
+	</script>
+</body>
+</html>
