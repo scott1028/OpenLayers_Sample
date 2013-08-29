@@ -3,29 +3,70 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Document</title>
+	<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+	<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
 	<script src="http://openlayers.org/api/OpenLayers.js"></script>
 </head>
 <body>
+	<!-- <div style="border: 2px solid #303030;width:100px;height:100px;" id="panel">測試看看</div> -->
 	<div style="width:800px;height:600px;" id="map"></div>
 	<script>
 		var map = new OpenLayers.Map('map');
-		var wms = new OpenLayers.Layer.WMS(
-			'OpenLayers WMS',
-			'http://vmap0.tiles.osgeo.org/wms/vmap0?layers=basic'
-		);
-		map.addLayer(wms);
+
+		// 
+		// 使用 Google Map || OpenStreet 的圖資
+		// var gmap = new OpenLayers.Layer.WMS('OpenLayers WMS','http://vmap0.tiles.osgeo.org/wms/vmap0',{'layers':'basic'});
+		// var gmap = new OpenLayers.Layer.Google();
+		var gmap = new OpenLayers.Layer.OSM();
+		map.addLayer(gmap);
+
+		// 
+		// 加上這行將顯示圖資
 		map.zoomToMaxExtent();
 
+		// 圖資投影座標系統轉換
+		var fromProjection = new OpenLayers.Projection("EPSG:4326");   	// OpenLayers Coordinate
+		var toProjection   = new OpenLayers.Projection("EPSG:900913"); 	// 使用的圖資之 Coordinate
+
+		// 
 		// 畫上標記
-		var addMarker=function(){
-			var vectorLayer = new OpenLayers.Layer.Vector("Overlay");
-			var feature = new OpenLayers.Feature.Vector(
-				new OpenLayers.Geometry.Point(0,0),
-				{some:'data'},
-				{externalGraphic: 's1.gif', graphicHeight: 16, graphicWidth: 16});
-			vectorLayer.addFeatures(feature);
-			map.addLayer(vectorLayer);
-		};
+		var markers = new OpenLayers.Layer.Markers( "Markers" );
+		map.addLayer(markers);
+		var icon = new OpenLayers.Icon('s1.gif');
+		var pos = new OpenLayers.LonLat(100.0,20.0).transform( fromProjection, toProjection);	// 座標系統需要轉換
+		var marker=new OpenLayers.Marker(pos,icon);
+		markers.addMarker(marker);
+
+		// 
+		// PolyLine
+		// var lineLayer = new OpenLayers.Layer.Vector("Line Layer"); 
+
+		// map.addLayer(lineLayer);
+		// map.addControl(new OpenLayers.Control.DrawFeature(lineLayer, OpenLayers.Handler.Path));
+		// var points = new Array(
+		// 	new OpenLayers.Geometry.Point(0, 0).transform( fromProjection, toProjection),		// 一樣要轉換座標
+		// 	new OpenLayers.Geometry.Point(100, 20).transform( fromProjection, toProjection)
+		// );
+
+		// var line = new OpenLayers.Geometry.LineString(points);
+
+		// var style = { 
+		// 	strokeColor: '#0000ff',
+		// 	strokeOpacity: 0.5,
+		// 	strokeWidth: 5
+		// };
+
+		// var lineFeature = new OpenLayers.Feature.Vector(line, null, style);
+		// lineLayer.addFeatures([lineFeature]);
+
+		// popup = new OpenLayers.Popup("chicken1",
+		// 	new OpenLayers.LonLat(5,40).transform( fromProjection, toProjection),
+		// 	new OpenLayers.Size(200,200),
+		// 	"<h4>example popup</h4>",
+		// 	true
+		// );
+		// map.addPopup(popup);
+
 	</script>
 </body>
 </html>
